@@ -22,7 +22,7 @@ recipes_df = pd.read_csv(os.path.join(here, "../../files/PP_recipes.csv"))
 interactions_df = pd.concat([temp_df_train, temp_df_valid, temp_df_test], ignore_index=True)
 interactions_df['review'] = ""
 for i in interactions_df.index:
-    print("Interactions file creation in progress: " + str(i) + "/" + str(len(interactions_df.index)))
+    print("Interactions file creation in progress: " + str(i) + "/" + str(len(interactions_df.index)) - 1)
     interactions_df.at[i, 'review'] = temp_df_RAW_interactions[(temp_df_RAW_interactions['user_id'] ==
                                                                 interactions_df.at[i, 'user_id']) &
                                                                (temp_df_RAW_interactions['recipe_id'] ==
@@ -57,7 +57,7 @@ recipes_df['description'] = ""
 recipes_df['ingredients'] = ""
 recipes_df['n_ingredients'] = ""
 for i in recipes_df.index:
-    print("\nRecipes file creation in progress: " + str(i) + "/" + str(len(recipes_df.index)))
+    print("\nRecipes file creation in progress: " + str(i) + "/" + str(len(recipes_df.index) - 1))
     recipes_df.at[i, 'name'] = \
         temp_df_RAW_recipes[temp_df_RAW_recipes['id'] == recipes_df.at[i, 'id']]['name'].values[0]
     recipes_df.at[i, 'contributor_id'] = \
