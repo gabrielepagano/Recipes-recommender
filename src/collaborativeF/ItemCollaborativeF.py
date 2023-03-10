@@ -10,12 +10,13 @@
 #   (we avoid to consider both the comments and the low rated reviews because the first ones are useless in the
 #   recommendation decision and the second ones because we do not want to recommend something to a user basing on some
 #   poorly rated items).
-# - TODO: we have to decide the formula to increase the rho. I was thinking about a slighter increase for the 4.0 ratings
-#           and a faster one for the 5.0 ones but for sure if the user has no ratings >= 4.0 he will have rho = 0.
 # - This because we want to give a more personalized recommendation to a user that "knows what he wants".
-# - After have assigned the rho, we compute the similarity (TODO: we have to decide which type of similarity)
-#   between the M items he didn't rate and the N ones with the highest relevance score, computed
-#   using a weighted sum between the normalized popularity score (from 1 to 5) and the score he assigned to them
-#   (TODO: we have to decide N, we can also try different ones and compare in some histograms)
-# - We will have a NxM matrix and from this we will take P items (TODO: decide P and the criterion to choose them)
-#   to recommend to the user
+# - A possible way to increase rho can be to exploit the telescoping mathematical series 1 / [n * (n+1)] and
+#   6/pi^2 * 1/n^2 which both converge to 1. The idea is to update the rho, after k ratings of the user which are either
+#   4 or 5, by considering the weighted sum of the k-th term of the telescoping series and the k-th term of the other one
+#   where the weights are, respectively, the number of 4-rated items and the number of 5-rated items.
+# - After have assigned the rho, we compute the cosine similarity between the M items he didn't rate and the N ones
+#   with the highest relevance score, computed using a weighted sum between the normalized popularity score
+#   (from 1 to 5) and the score he assigned to them (we can also try different values of N and compare in some histograms)
+# - We will have a NxM matrix and from this we will take the P items with the highest similarity to recommend
+#   to the user (we will try different P in order to compute metrics Recall@P and NDCG@P with different values)
