@@ -18,7 +18,7 @@ temp_df_RAW_recipes = pd.read_csv(os.path.join(here, "../../files/RAW_recipes.cs
 users_df = pd.read_csv(os.path.join(here, "../../files/PP_users.csv"))
 recipes_df = pd.read_csv(os.path.join(here, "../../files/PP_recipes.csv"))
 
-# the final dataframe structure will be: u, i, date, rating, review
+# the dataframe structure will be: u, i, date, rating, review
 interactions_df = pd.concat([temp_df_train, temp_df_valid, temp_df_test], ignore_index=True)
 interactions_df['review'] = ""
 for i in interactions_df.index:
@@ -34,14 +34,14 @@ interactions_df = interactions_df.iloc[:, [2, 3, 0, 1, 4]]
 interactions_df = interactions_df.reset_index(drop=True)
 interactions_df.to_csv(save_path_interactions, index=False)
 
-# the final dataframe structure will be: u, items, ratings, n_interactions
+# the dataframe structure will be: u, items, ratings, n_interactions
 users_df = users_df.drop(['techniques', 'n_items'], axis=1)
 users_df.columns = ['u', 'items', 'ratings', 'n_interactions']
 print("\nUsers file correctly created.")
 print("Saving user file...")
 users_df.to_csv(save_path_users, index=False)
 
-# the final dataframe structure will be: i, name, contributor_id, tags, minutes (,submitted, nutrition, n_steps,
+# the dataframe structure will be: i, name, contributor_id, tags, minutes (,submitted, nutrition, n_steps,
 #                                        steps, description, ingredients, n_ingredients)
 recipes_df = recipes_df.drop(['name_tokens', 'ingredient_tokens', 'steps_tokens', 'techniques', 'calorie_level',
                               'ingredient_ids'], axis=1)
