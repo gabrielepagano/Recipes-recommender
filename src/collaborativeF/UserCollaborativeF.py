@@ -10,13 +10,9 @@
 #           #good_items(u) = 0.75 (!!!) * #items_rated_4(u) + #items_rated_5(u)
 #           #items_different(u,u*) = #items rated by u but not by u*
 #           utility(u,u*) = #good_items(u) / #items_different(u,u*)
-#           rating_rate(u) = #items_rated(u) / #items (!!!)
 #       The relevance score is defined as following:
 #           Relevance_score(u,u*) = 0, if cos_similarity(u,u*) == 1
-#           Relevance_score(u,u*) = cos_similarity(u,u*) * utility(u,u*) * rho_new(u) (rating_rate(u) -> !!!), otherwise
-#           (At beginning I thought about the rating rate, but the problem is that it grows too slowly compared to the
-#            other two factors, so I preferred to choose something that grows with the same rate,
-#            but we can still try also the other alternative)
+#           Relevance_score(u,u*) = cos_similarity(u,u*) * utility(u,u*) * rho_new(u)
 # - we pick the P (!!!) most relevant users according to the relevance_score and for each we take M (!!!) most rated
 #   (according to the item relevance score computed like this:
 #   item_relevance_score =
@@ -29,3 +25,44 @@
 #
 #
 # - NB: when I wrote (!!!) I provided alternatives of different models that we can evaluate in the validation set
+import numpy as np
+import pandas as pd
+from src import utils
+from numpy.linalg import norm
+
+u_id = 12  # our reference user
+users_df = pd.read_csv("../../dataset/users.csv")
+recipes_df = pd.read_csv("../../dataset/recipes.csv")
+relevance_scores = []
+# TODO: Python sees items as a concatenation of chars and ratings as a unique string (does the same thing for u_items and u_ratings)
+uid_items = users_df.iloc[u_id]['items']  # ids of the items rated by u_id
+uid_ratings = users_df.iloc[u_id]['ratings']
+uid_ratings_full = np.zeros(len(recipes_df.index))  # ratings of uid, but also considering non-rated items
+for i in range(len(uid_items)):
+    index = uid_items[i]
+    print(index)
+    uid_ratings_full[index] = uid_ratings[i]
+for u in range(users_df.index):
+    if u != u_id:
+        rho = users_df.iloc[u]['rho']
+        u_items = users_df.iloc[u]['items']  # ids of the items rated by u
+        u_ratings = users_df.iloc[u]['ratings']
+        u_ratings_full = np.zeros(len(recipes_df.index))  # ratings of u, but also considering non-rated items
+        for i in range(len(u_items)):
+            index = u_items[i]
+            u_ratings_full[index] = u_ratings[i]
+        n_items4, n_items5 = utils.goodItemsCalculation(u_ratings)
+        n_good = 0.75 * n_items4 + n_items5  # we can eventually try different models and change that 0.75
+        n_different = utils.itemsDifferenceCalculation(u_items, uid_items)
+        utility = n_good / n_different
+        cos_similarity = np.dot(u_ratings_full, uid_ratings_full) / (norm(u_ratings_full) * norm(uid_ratings_full))
+        if cos_similarity == 1:
+            relevance_score = 0
+        else:
+            relevance_score = cos_similarity * utility * rho
+        relevance_scores.append(relevance_score)
+    else:
+        relevance_scores.append(1)  # A value that would be impossible to obtain. It's just a placeholder that we need
+        # to understand that the current array cell we are considering in the relevance_scores
+        # array is referred to the reference user itself.
+print(relevance_scores)
