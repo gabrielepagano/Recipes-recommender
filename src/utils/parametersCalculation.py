@@ -10,7 +10,7 @@ def telescope_series(n):
         n: the n-th element of the series
     """
     ret = 0
-    for i in range(1, n):
+    for i in range(1, n+1):
         ret += 1 / (i * (i + 1))
 
     return ret
@@ -24,7 +24,7 @@ def basel_series(n):
         n: the n-th element of the series
     """
     ret = 0
-    for i in range(1, n):
+    for i in range(1, n+1):
         ret += (6 / math.pow(math.pi, 2)) * 1 / math.pow(i, 2)
 
     return ret
