@@ -44,6 +44,7 @@ for u in range(len(users_df.index)):
     print("Currently the user {} is being processed...".format(u))
     couple = [u]
     if u != u_id:
+        ratings_different = []
         rho = users_df.iloc[u]['rho']
         u_items = utils.fromStringToIntList(users_df.iloc[u]['items'])  # ids of the items rated by u
         u_ratings = utils.fromStringToFloatList(users_df.iloc[u]['ratings'])
@@ -51,9 +52,11 @@ for u in range(len(users_df.index)):
         for i in range(len(u_items)):
             index = u_items[i]
             u_ratings_full[index] = u_ratings[i]
-        n_items4, n_items5 = utils.goodItemsCalculation(u_ratings)
+        n_different, items_different = utils.itemsDifferenceCalculation(u_items, uid_items)
+        for item in items_different:
+            ratings_different.append(u_ratings_full[item])
+        n_items4, n_items5 = utils.goodItemsCalculation(ratings_different)
         n_good = 0.75 * n_items4 + n_items5  # we can eventually try different models and change that 0.75
-        n_different = utils.itemsDifferenceCalculation(u_items, uid_items)
         utility = n_good / n_different
         norm_prod = norm(u_ratings_full) * norm(uid_ratings_full)
         if norm_prod == 0:

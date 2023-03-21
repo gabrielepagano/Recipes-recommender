@@ -97,7 +97,8 @@ def goodItemsCalculation(ratings):
 
 def itemsDifferenceCalculation(items_user, items_u):
     """
-    Returns the number of items rated by the current user that have not been rated by the reference user.
+    Returns the number of items rated by the current user that have not been rated by the reference user and a list
+    containing them.
 
     Args:
         items_u: a list (or list-like string) containing all the ids corresponding to the items that the reference user
@@ -107,10 +108,12 @@ def itemsDifferenceCalculation(items_user, items_u):
     """
     n = 0
     dim = len(items_user)
+    items_different = []
     for i in range(dim):
         if not items_user[i] in items_u:
             n += 1
-    return n
+            items_different.append(items_user[i])
+    return n, items_different
 
 
 def rho_positive(a, b):
