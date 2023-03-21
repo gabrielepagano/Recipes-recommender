@@ -15,8 +15,8 @@ users_df = pd.read_csv(os.path.join(here, "../../dataset/users.csv"))
 l_rho = []
 l_rho_positive = []
 for l_ratings in users_df['ratings']:
-    l_rho.append(utils.calc_rho(l_ratings))
-    l_rho_positive.append(utils.calc_rho_positive(l_ratings))
+    l_rho.append(utils.calc_rho(utils.fromStringToFloatList(l_ratings)))
+    l_rho_positive.append(utils.calc_rho_positive(utils.fromStringToFloatList(l_ratings)))
 
 users_df['rho'] = l_rho
 users_df['rho_positive'] = l_rho_positive

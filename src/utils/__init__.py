@@ -15,3 +15,11 @@ def goodItemsCalculation(l_ratings):
 
 def itemsDifferenceCalculation(items_user, items_u):
     return parametersCalculation.itemsDifferenceCalculation(items_user, items_u)
+
+
+def fromStringToIntList(s):
+    return parametersCalculation.fromStringToIntList(s)
+
+
+def fromStringToFloatList(s):
+    return parametersCalculation.fromStringToFloatList(s)

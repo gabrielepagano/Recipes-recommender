@@ -10,7 +10,7 @@ def telescope_series(n):
         n: the n-th element of the series
     """
     ret = 0
-    for i in range(1, n+1):
+    for i in range(1, n + 1):
         ret += 1 / (i * (i + 1))
 
     return ret
@@ -24,7 +24,7 @@ def basel_series(n):
         n: the n-th element of the series
     """
     ret = 0
-    for i in range(1, n+1):
+    for i in range(1, n + 1):
         ret += (6 / math.pow(math.pi, 2)) * 1 / math.pow(i, 2)
 
     return ret
@@ -54,6 +54,30 @@ def translate(value, from_, to_):
     return to_[0] + (valueScaled * to_Span)
 
 
+def fromStringToIntList(s):
+    """
+    Parses the input parameter to a list of integers and returns it.
+
+    Args:
+        s: the input string
+    """
+    cut_str = s[1:-1]
+    list_of_items = cut_str.split(',')
+    return [int(x) for x in list_of_items]
+
+
+def fromStringToFloatList(s):
+    """
+        Parses the input parameter to a list of floating point numbers and returns it.
+
+        Args:
+            s: the input string
+        """
+    cut_str = s[1:-1]
+    list_of_ratings = cut_str.split(',')
+    return [float(x) for x in list_of_ratings]
+
+
 def goodItemsCalculation(ratings):
     """
     Returns the number of good rated items (i.e., the number of items rated either 4* or 5*) for a specific user.
@@ -64,9 +88,9 @@ def goodItemsCalculation(ratings):
     a = 0  # a counts the number of 4* (four star) ratings
     b = 0  # b counts the number of 5* (five star) ratings
     for r in ratings:
-        if r == '4':
+        if r == 4.0:
             a += 1
-        elif r == '5':
+        elif r == 5.0:
             b += 1
     return a, b
 
@@ -140,6 +164,6 @@ def calc_rho(ratings):
     """
     n = 0  # counts the total number of ratings (possibly fair to retrieve this information from n_interactions)
     for r in ratings:
-        if r in ['1', '2', '3', '4', '5']:
+        if r in [1.0, 2.0, 3.0, 4.0, 5.0]:
             n += 1
     return rho(n)
