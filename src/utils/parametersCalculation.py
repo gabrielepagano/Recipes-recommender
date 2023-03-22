@@ -80,17 +80,17 @@ def fromStringToFloatList(s):
 
 def goodItemsCalculation(ratings):
     """
-    Returns the number of good rated items (i.e., the number of items rated either 5* or 6*) for a specific user.
+    Returns the number of good rated items (i.e., the number of items rated either 4* or 5*) for a specific user.
 
     Args:
         ratings: a list (or list-like string) containing all ratings the user has assigned to items.
     """
-    a = 0  # a counts the number of 5* (four star) ratings
-    b = 0  # b counts the number of 6* (five star) ratings
+    a = 0  # a counts the number of 4* (four star) ratings
+    b = 0  # b counts the number of 5* (five star) ratings
     for r in ratings:
-        if r == 5.0:
+        if r == 4.0:
             a += 1
-        elif r == 6.0:
+        elif r == 5.0:
             b += 1
     return a, b
 
@@ -98,12 +98,12 @@ def goodItemsCalculation(ratings):
 def itemsDifferenceCalculation(items_user, items_u):
     """
     Returns the number of items rated by the current user that have not been rated by the reference user and a list
-    containing them.
+    containing their IDs.
 
     Args:
-        items_u: a list (or list-like string) containing all the ids corresponding to the items that the reference user
+        items_u: a list (or list-like string) containing all the IDs corresponding to the items that the reference user
                  has rated.
-        items_user: a list (or list-like string) containing all the ids corresponding to the items that the current user
+        items_user: a list (or list-like string) containing all the IDs corresponding to the items that the current user
                     has rated.
     """
     n = 0
@@ -118,12 +118,12 @@ def itemsDifferenceCalculation(items_user, items_u):
 
 def rho_positive(a, b):
     """
-    Returns the rho value calculated for a particular user in respect to their 5* and 6* ratings.
+    Returns the rho value calculated for a particular user in respect to their 4* and 5* ratings.
     Specifically: rho_positive(a, b) = (a * Telescope_series(a) + b * Basel_series(b)) / (a + b)
 
     Args:
-        a: the number of 5* (four star) ratings of a particular user.
-        b: the number of 6* (five star) ratings of a particular user.
+        a: the number of 4* (four star) ratings of a particular user.
+        b: the number of 5* (five star) ratings of a particular user.
     """
     n = a + b
     if n > 0:
@@ -165,5 +165,8 @@ def calc_rho(ratings):
     Args:
         ratings: a list (or list-like string) containing all ratings the user has assigned to items.
     """
-    n = len(ratings)
+    n = 0  # counts the total number of ratings (possibly fair to retrieve this information from n_interactions)
+    for r in ratings:
+        if r in [1.0, 2.0, 3.0, 4.0, 5.0]:
+            n += 1
     return rho(n)

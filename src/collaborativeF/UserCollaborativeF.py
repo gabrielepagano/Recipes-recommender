@@ -30,9 +30,7 @@ import pandas as pd
 from src import utils
 from numpy.linalg import norm
 
-u_id = 8903  # our reference user. I found out that the more items rated a user has, the lower will be the highest relevance
-# scores for him; but at the same time the fewer items rated he has, the lower will be the number of non-zero
-# relevance scores
+u_id = 12  # our reference user ID
 users_df = pd.read_csv("../../dataset/users.csv")
 recipes_df = pd.read_csv("../../dataset/recipes.csv")
 relevance_scores = []
@@ -57,8 +55,8 @@ for u in range(len(users_df.index)):
         n_different, items_different = utils.itemsDifferenceCalculation(u_items, uid_items)
         for item in items_different:
             ratings_different.append(u_ratings_full[item])
-        n_items5, n_items6 = utils.goodItemsCalculation(ratings_different)
-        n_good = 0.75 * n_items5 + n_items6  # we can eventually try different models and change that 0.75
+        n_items4, n_items5 = utils.goodItemsCalculation(ratings_different)
+        n_good = 0.75 * n_items4 + n_items5  # we can eventually try different models and change that 0.75
         if n_different == 0:
             utility = 0
         else:
