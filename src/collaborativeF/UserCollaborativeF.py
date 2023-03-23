@@ -36,6 +36,7 @@ recipes_df = pd.read_csv("../../dataset/recipes.csv")
 relevance_scores = []
 uid_items = utils.fromStringToIntList(users_df.iloc[u_id]['items'])  # ids of the items rated by u_id
 uid_ratings = utils.fromStringToFloatList(users_df.iloc[u_id]['ratings'])
+uid_rho = users_df.iloc[u_id]['rho']
 uid_ratings_full = np.zeros(len(recipes_df.index))  # ratings of uid, but also considering non-rated items
 for i in range(len(uid_items)):
     index = uid_items[i]
@@ -79,3 +80,59 @@ for u in range(len(users_df.index)):
     # that specific user and its user ID
 
 relevance_scores.sort(reverse=True, key=lambda x: x[1])  # reverse ordering by rating
+
+# for the moment let's suppose P = 5, M = 10 and that the popularity score is always 2.5 (We need the popularity model
+# that hasn't been implemented yet)
+P = 5  # (!!!)
+M = 10  # (!!!)
+popularity_score = 2.5
+relevant_users_ids = []
+total_items = []  # all the items ids of the relevant users
+total_ratings = []  # the corresponding ratings
+item_ratings_list = []  # a list that will contain as elements an item ID (taken from total_items)
+# and its corresponding ratings in total_ratings
+items_checked = []  # item IDs for which we already checked duplicates
+count = 0  # number of times that the current item ID is present in total_items
+for i in range(P):
+    relevant_users_ids.append(relevance_scores[i + 1][0])  # we skip the first one because it is the reference user
+for user in relevant_users_ids:
+    u_items = utils.fromStringToIntList(users_df.iloc[user]['items'])
+    u_ratings = utils.fromStringToFloatList(users_df.iloc[user]['ratings'])
+    total_items = total_items + u_items
+    total_ratings = total_ratings + u_ratings
+for item in total_items:
+    item_ratings = []  # the single item appended in item_ratings_list
+    s = 0
+    count = 0
+    avg = 0
+    if item not in items_checked:
+        indices = utils.find_indices(total_items, item)  # if the item has been rated multiple times we take as rating
+        # the average of its ratings
+        for idx in indices:
+            if total_ratings[idx] != 0.0:  # we do not want to count '0.0' as rating
+                s += total_ratings[idx]
+                count += 1
+        if count != 0:
+            avg = s / count
+            item_ratings.append(item)
+            item_ratings.append(avg)
+            item_ratings_list.append(item_ratings)
+        items_checked.append(item)
+
+item_relevance_scores = []  # the single element of this list is a couple <item, relevance_score>
+for elem in item_ratings_list:
+    if elem[0] not in uid_items:
+        item_relevance_score = [elem[0]]
+        item_score = uid_rho * elem[1] + (1 - uid_rho) * popularity_score  # TODO: implement popularity model
+        item_relevance_score.append(item_score)
+        item_relevance_scores.append(item_relevance_score)
+
+item_relevance_scores.sort(reverse=True, key=lambda x: x[1])  # reverse ordering by item_relevance_score
+if len(item_relevance_scores) < M:
+    # TODO take the M - n_chosen most popular items that have not been rated by the reference user
+    print("Hey, looks like there are not enough items to suggest :( ")
+else:
+    item_relevance_scores = item_relevance_scores[0:M]
+    print("\nHere there are the suggested items for user n° {}:\n".format(u_id))
+    for item in item_relevance_scores:
+        print("Item n° {}   --->   Score: {}".format(item[0], item[1]))
