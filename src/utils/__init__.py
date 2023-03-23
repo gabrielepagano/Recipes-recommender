@@ -23,3 +23,7 @@ def fromStringToIntList(s):
 
 def fromStringToFloatList(s):
     return parametersCalculation.fromStringToFloatList(s)
+
+
+def find_indices(lis, x):
+    return parametersCalculation.find_indices(lis, x)

@@ -97,7 +97,7 @@ def goodItemsCalculation(ratings):
 
 def itemsDifferenceCalculation(items_user, items_u):
     """
-    Returns the number of items rated by the current user that have not been rated by the reference user and a list
+    Returns the number of items with which the current user has interacted and the reference user has not and a list
     containing their IDs.
 
     Args:
@@ -114,6 +114,21 @@ def itemsDifferenceCalculation(items_user, items_u):
             n += 1
             items_different.append(items_user[i])
     return n, items_different
+
+
+def find_indices(lis, x):
+    """
+    Returns a list containing all the indices of the occurrences of an element in a list, if any.
+
+    Args:
+        lis: the list to be checked
+        x: the element of which we want to find the occurrences
+    """
+    indices = []
+    for idx, value in enumerate(lis):
+        if value == x:
+            indices.append(idx)
+    return indices
 
 
 def rho_positive(a, b):
