@@ -9,20 +9,20 @@ def calc_rho_positive(l_ratings):
     return parametersCalculation.calc_rho_positive(l_ratings)
 
 
-def goodItemsCalculation(l_ratings):
-    return parametersCalculation.goodItemsCalculation(l_ratings)
+def good_items_calculation(l_ratings):
+    return parametersCalculation.good_items_calculation(l_ratings)
 
 
-def itemsDifferenceCalculation(items_user, items_u):
-    return parametersCalculation.itemsDifferenceCalculation(items_user, items_u)
+def items_difference_calculation(items_user, items_u):
+    return parametersCalculation.items_difference_calculation(items_user, items_u)
 
 
-def fromStringToIntList(s):
-    return parametersCalculation.fromStringToIntList(s)
+def from_string_to_int_list(s):
+    return parametersCalculation.from_string_to_int_list(s)
 
 
-def fromStringToFloatList(s):
-    return parametersCalculation.fromStringToFloatList(s)
+def from_string_to_float_list(s):
+    return parametersCalculation.from_string_to_float_list(s)
 
 
 def find_indices(lis, x):

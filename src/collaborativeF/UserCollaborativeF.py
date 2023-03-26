@@ -34,8 +34,8 @@ u_id = 12  # our reference user ID
 users_df = pd.read_csv("../../dataset/users.csv")
 recipes_df = pd.read_csv("../../dataset/recipes.csv")
 relevance_scores = []
-uid_items = utils.fromStringToIntList(users_df.iloc[u_id]['items'])  # ids of the items rated by u_id
-uid_ratings = utils.fromStringToFloatList(users_df.iloc[u_id]['ratings'])
+uid_items = utils.from_string_to_int_list(users_df.iloc[u_id]['items'])  # ids of the items rated by u_id
+uid_ratings = utils.from_string_to_float_list(users_df.iloc[u_id]['ratings'])
 uid_rho = users_df.iloc[u_id]['rho']
 uid_ratings_full = np.zeros(len(recipes_df.index))  # ratings of uid, but also considering non-rated items
 for i in range(len(uid_items)):
@@ -47,16 +47,16 @@ for u in range(len(users_df.index)):
     if u != u_id:
         ratings_different = []
         rho = users_df.iloc[u]['rho']
-        u_items = utils.fromStringToIntList(users_df.iloc[u]['items'])  # ids of the items rated by u
-        u_ratings = utils.fromStringToFloatList(users_df.iloc[u]['ratings'])
+        u_items = utils.from_string_to_int_list(users_df.iloc[u]['items'])  # ids of the items rated by u
+        u_ratings = utils.from_string_to_float_list(users_df.iloc[u]['ratings'])
         u_ratings_full = np.zeros(len(recipes_df.index))  # ratings of u, but also considering non-rated items
         for i in range(len(u_items)):
             index = u_items[i]
             u_ratings_full[index] = u_ratings[i]
-        n_different, items_different = utils.itemsDifferenceCalculation(u_items, uid_items)
+        n_different, items_different = utils.items_difference_calculation(u_items, uid_items)
         for item in items_different:
             ratings_different.append(u_ratings_full[item])
-        n_items4, n_items5 = utils.goodItemsCalculation(ratings_different)
+        n_items4, n_items5 = utils.good_items_calculation(ratings_different)
         n_good = 0.75 * n_items4 + n_items5  # we can eventually try different models and change that 0.75
         if n_different == 0:
             utility = 0
@@ -83,6 +83,7 @@ relevance_scores.sort(reverse=True, key=lambda x: x[1])  # reverse ordering by r
 
 # for the moment let's suppose P = 5, M = 10 and that the popularity score is always 2.5 (We need the popularity model
 # that hasn't been implemented yet)
+# TODO: add a control on if there are less than P relevant users
 P = 5  # (!!!)
 M = 10  # (!!!)
 popularity_score = 2.5
@@ -96,8 +97,8 @@ count = 0  # number of times that the current item ID is present in total_items
 for i in range(P):
     relevant_users_ids.append(relevance_scores[i + 1][0])  # we skip the first one because it is the reference user
 for user in relevant_users_ids:
-    u_items = utils.fromStringToIntList(users_df.iloc[user]['items'])
-    u_ratings = utils.fromStringToFloatList(users_df.iloc[user]['ratings'])
+    u_items = utils.from_string_to_int_list(users_df.iloc[user]['items'])
+    u_ratings = utils.from_string_to_float_list(users_df.iloc[user]['ratings'])
     total_items = total_items + u_items
     total_ratings = total_ratings + u_ratings
 for item in total_items:

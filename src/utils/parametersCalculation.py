@@ -54,7 +54,7 @@ def translate(value, from_, to_):
     return to_[0] + (valueScaled * to_Span)
 
 
-def fromStringToIntList(s):
+def from_string_to_int_list(s):
     """
     Parses the input parameter to a list of integers and returns it.
 
@@ -66,24 +66,24 @@ def fromStringToIntList(s):
     return [int(x) for x in list_of_items]
 
 
-def fromStringToFloatList(s):
+def from_string_to_float_list(s):
     """
-        Parses the input parameter to a list of floating point numbers and returns it.
+    Parses the input parameter to a list of floating point numbers and returns it.
 
-        Args:
-            s: the input string
-        """
+    Args:
+        s: the input string
+    """
     cut_str = s[1:-1]
     list_of_ratings = cut_str.split(',')
     return [float(x) for x in list_of_ratings]
 
 
-def goodItemsCalculation(ratings):
+def good_items_calculation(ratings):
     """
     Returns the number of good rated items (i.e., the number of items rated either 4* or 5*) for a specific user.
 
     Args:
-        ratings: a list (or list-like string) containing all ratings the user has assigned to items.
+        ratings: a list containing all ratings the user has assigned to items.
     """
     a = 0  # a counts the number of 4* (four star) ratings
     b = 0  # b counts the number of 5* (five star) ratings
@@ -95,15 +95,15 @@ def goodItemsCalculation(ratings):
     return a, b
 
 
-def itemsDifferenceCalculation(items_user, items_u):
+def items_difference_calculation(items_user, items_u):
     """
     Returns the number of items with which the current user has interacted and the reference user has not and a list
     containing their IDs.
 
     Args:
-        items_u: a list (or list-like string) containing all the IDs corresponding to the items that the reference user
+        items_u: a list containing all the IDs corresponding to the items that the reference user
                  has rated.
-        items_user: a list (or list-like string) containing all the IDs corresponding to the items that the current user
+        items_user: a list containing all the IDs corresponding to the items that the current user
                     has rated.
     """
     n = 0
@@ -152,9 +152,9 @@ def calc_rho_positive(ratings):
     Parses the interactions of a particular user and calculate the rho_positive value.
 
     Args:
-        ratings: a list (or list-like string) containing all ratings the user has assigned to items.
+        ratings: a list containing all ratings the user has assigned to items.
     """
-    a, b = goodItemsCalculation(ratings)
+    a, b = good_items_calculation(ratings)
     return rho_positive(a, b)
 
 
@@ -178,7 +178,7 @@ def calc_rho(ratings):
     Parses the interactions of a particular user and calculate the rho value.
 
     Args:
-        ratings: a list (or list-like string) containing all ratings the user has assigned to items.
+        ratings: a list containing all ratings the user has assigned to items.
     """
     n = 0  # counts the total number of ratings (possibly fair to retrieve this information from n_interactions)
     for r in ratings:
