@@ -30,7 +30,7 @@ import pandas as pd
 from src import utils
 from numpy.linalg import norm
 
-u_id = 12  # our reference user ID
+u_id = 180  # our reference user ID
 users_df = pd.read_csv("../../dataset/users.csv")
 recipes_df = pd.read_csv("../../dataset/recipes.csv")
 relevance_scores = []
@@ -42,7 +42,8 @@ for i in range(len(uid_items)):
     index = uid_items[i]
     uid_ratings_full[index] = uid_ratings[i]
 for u in range(len(users_df.index)):
-    print("Currently the user {} is being processed...".format(u))
+    if u % 1000 == 0:
+        print("Currently the user {} is being processed...".format(u))
     couple = [u]
     if u != u_id:
         ratings_different = []
@@ -83,7 +84,6 @@ relevance_scores.sort(reverse=True, key=lambda x: x[1])  # reverse ordering by r
 
 # for the moment let's suppose P = 5, M = 10 and that the popularity score is always 2.5 (We need the popularity model
 # that hasn't been implemented yet)
-# TODO: add a control on if there are less than P relevant users
 P = 5  # (!!!)
 M = 10  # (!!!)
 popularity_score = 2.5
@@ -94,39 +94,47 @@ item_ratings_list = []  # a list that will contain as elements an item ID (taken
 # and its corresponding ratings in total_ratings
 items_checked = []  # item IDs for which we already checked duplicates
 count = 0  # number of times that the current item ID is present in total_items
-for i in range(P):
-    relevant_users_ids.append(relevance_scores[i + 1][0])  # we skip the first one because it is the reference user
-for user in relevant_users_ids:
-    u_items = utils.from_string_to_int_list(users_df.iloc[user]['items'])
-    u_ratings = utils.from_string_to_float_list(users_df.iloc[user]['ratings'])
-    total_items = total_items + u_items
-    total_ratings = total_ratings + u_ratings
-for item in total_items:
-    item_ratings = []  # the single item appended in item_ratings_list
-    s = 0
-    count = 0
-    avg = 0
-    if item not in items_checked:
-        indices = utils.find_indices(total_items, item)  # if the item has been rated multiple times we take as rating
-        # the average of its ratings
-        for idx in indices:
-            if total_ratings[idx] != 0.0:  # we do not want to count '0.0' as rating
-                s += total_ratings[idx]
-                count += 1
-        if count != 0:
-            avg = s / count
-            item_ratings.append(item)
-            item_ratings.append(avg)
-            item_ratings_list.append(item_ratings)
-        items_checked.append(item)
+if len(relevance_scores) == 0:
+    # TODO: use just the popularity model
+    print("Hey, looks like we have to use the popularity model :(")
+else:
+    if len(relevance_scores) - 1 < P:
+        P = len(relevance_scores) - 1
+    for i in range(P):
+        relevant_users_ids.append(relevance_scores[i + 1][0])  # we skip the first one because it is the reference user
+    for user in relevant_users_ids:
+        u_items = utils.from_string_to_int_list(users_df.iloc[user]['items'])
+        u_ratings = utils.from_string_to_float_list(users_df.iloc[user]['ratings'])
+        total_items = total_items + u_items
+        total_ratings = total_ratings + u_ratings
+    for item in total_items:
+        item_ratings = []  # the single item appended in item_ratings_list
+        s = 0
+        count = 0
+        avg = 0
+        if item not in items_checked:
+            indices = utils.find_indices(total_items,
+                                         item)  # if the item has been rated multiple times we take as rating
+            # the average of its ratings
+            for idx in indices:
+                if total_ratings[idx] != 0.0:  # we do not want to count '0.0' as rating
+                    s += total_ratings[idx]
+                    count += 1
+            if count != 0:
+                avg = s / count
+                item_ratings.append(item)
+                item_ratings.append(avg)
+                item_ratings_list.append(item_ratings)
+            items_checked.append(item)
 
-item_relevance_scores = []  # the single element of this list is a couple <item, relevance_score>
-for elem in item_ratings_list:
-    if elem[0] not in uid_items:
-        item_relevance_score = [elem[0]]
-        item_score = uid_rho * elem[1] + (1 - uid_rho) * popularity_score  # TODO: implement popularity model
-        item_relevance_score.append(item_score)
-        item_relevance_scores.append(item_relevance_score)
+    item_relevance_scores = []  # the single element of this list is a couple <item, relevance_score>
+    for elem in item_ratings_list:
+        if elem[0] not in uid_items:
+            item_relevance_score = [elem[0]]
+            item_score = uid_rho * elem[1] + (1 - uid_rho) * popularity_score  # TODO: implement popularity model
+            item_relevance_score.append(item_score)
+            item_relevance_scores.append(item_relevance_score)
+
 
 item_relevance_scores.sort(reverse=True, key=lambda x: x[1])  # reverse ordering by item_relevance_score
 if len(item_relevance_scores) < M:
