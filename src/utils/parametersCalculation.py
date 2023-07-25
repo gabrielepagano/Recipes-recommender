@@ -33,7 +33,8 @@ def basel_series(n):
 # (!) UNUSED - Subject to removal
 # TODO: if we want to use this method we should modify it taking into account also how much big the value was in the old
 #      span. For example if I want to translate '0.5' from a [0,1] interval to a [2,8] interval the result should be 5,
-#      but if we call the function below with these parameters it outputs 5/2.
+#      but if we call the function below with these parameters it outputs 5/2. -Gab
+#      (!!!) calling the function below with these parameters actually outputs 5 -Anthony
 def translate(value, from_, to_):
     """
     Translates a value from the original range to a new range.
@@ -115,6 +116,16 @@ def items_difference_calculation(items_user, items_u):
             items_different.append(items_user[i])
     return n, items_different
 
+def get_interacted(user_id, interactions_df):
+    """
+    Returns a list containing all the item ids for those a given user_id has interactions with, if any.
+
+    Args:
+        user_id: the id of the user in question
+        interactions_df: the dataframe with all the user-item interactions
+    """
+    idx = interactions_df.index[interactions_df['u'] == user_id]
+    return interactions_df['i'].loc[idx].tolist()
 
 def find_indices(lis, x):
     """

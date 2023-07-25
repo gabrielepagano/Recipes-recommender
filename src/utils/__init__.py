@@ -1,5 +1,10 @@
 from src.utils import parametersCalculation
 
+def get_interacted(user_id, interactions_df):
+    return parametersCalculation.get_interacted(user_id, interactions_df)
+
+def normalize(value, from_, to_):
+    return parametersCalculation.translate(value, from_, to_)
 
 def calc_rho(l_ratings):
     return parametersCalculation.calc_rho(l_ratings)
