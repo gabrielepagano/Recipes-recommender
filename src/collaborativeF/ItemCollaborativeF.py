@@ -20,7 +20,7 @@
 # Telescop_series(n) = 1 / [n * (n+1)] (Telescop_series(3) = 1/2 + 1/6 + 1/12)
 # Basel_series(n) = 6/pi^2 * 1/n^2
 # n = N_4 + N_5
-# rho(n) = (N_4 * Telescop_series(n) + N_5 * Telescop_series(n)) / (N_4 + N_5)
+# rho(n) = (N_4 * Telescop_series(n) + N_5 * Basel_series(n)) / (N_4 + N_5)
 
 # - After have assigned the rho, we compute the cosine similarity between the M items he didn't rate and the N ones
 #   with the highest relevance score, computed using a weighted sum between the normalized popularity score
