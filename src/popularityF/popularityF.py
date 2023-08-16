@@ -2,9 +2,9 @@ import os
 import pandas as pd
 from src.popularityF.popularityModel import PopularityModel
 
-
 # path statement necessary to let the project work in different environments with respect to PyCharm
 here = os.path.dirname(os.path.abspath(__file__))
+
 
 def recommend_items(user_id, topn, prnt=False, verbose=False):
     """

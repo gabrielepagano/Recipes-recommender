@@ -14,9 +14,9 @@
 #           Relevance_score(u,u*) = 0, if cos_similarity(u,u*) == 1
 #           Relevance_score(u,u*) = cos_similarity(u,u*) * utility(u,u*) * rho_new(u)
 # - we pick the P (!!!) most relevant users according to the relevance_score and for each we take M (!!!) most rated
-#   (according to the item relevance score computed like this:
-#   item_relevance_score =
-#       rho_new(u*) * rating(item) + (1 - rho_new(u*)) * popularity_score (Normalized between 1 and 5))
+#   items (according to the item relevance score computed like this:
+# #   item_relevance_score =
+# #       rho_new(u*) * rating(item) + (1 - rho_new(u*)) * popularity_score (Normalized between 1 and 5))
 #
 #   In case the recommended items end up being less than M (unlikely in our use case),
 #   we pick the remaining items from the Item Popularity Model.
@@ -27,7 +27,9 @@
 # - NB: when I wrote (!!!) I provided alternatives of different models that we can evaluate in the validation set
 import numpy as np
 import pandas as pd
+
 from src import utils
+from src import popularityF
 from numpy.linalg import norm
 
 u_id = 180  # our reference user ID
@@ -86,7 +88,7 @@ relevance_scores.sort(reverse=True, key=lambda x: x[1])  # reverse ordering by r
 # that hasn't been implemented yet)
 P = 5  # (!!!)
 M = 10  # (!!!)
-popularity_score = 2.5
+full_popularity_model = popularityF.recommend_items(u_id, -1)
 relevant_users_ids = []
 total_items = []  # all the items ids of the relevant users
 total_ratings = []  # the corresponding ratings
@@ -95,8 +97,11 @@ item_ratings_list = []  # a list that will contain as elements an item ID (taken
 items_checked = []  # item IDs for which we already checked duplicates
 count = 0  # number of times that the current item ID is present in total_items
 if len(relevance_scores) == 0:
-    # TODO: use just the popularity model
-    print("Hey, looks like we have to use the popularity model :(")
+    print("\nHere there are the suggested items for user n° {}:\n".format(u_id))
+    popular_recommended_items = popularityF.recommend_items(u_id, M)
+    ids = popular_recommended_items.index
+    for i in ids:
+        print("Item n° {}   --->   Score: {}".format(i, popular_recommended_items.iloc[i]['popularity_score']))
 else:
     if len(relevance_scores) - 1 < P:
         P = len(relevance_scores) - 1
@@ -130,16 +135,36 @@ else:
     item_relevance_scores = []  # the single element of this list is a couple <item, relevance_score>
     for elem in item_ratings_list:
         if elem[0] not in uid_items:
+            popularity_score = full_popularity_model.iloc[elem[0]]['popularity_score']
             item_relevance_score = [elem[0]]
-            item_score = uid_rho * elem[1] + (1 - uid_rho) * popularity_score  # TODO: implement popularity model
+            item_score = uid_rho * elem[1] + (1 - uid_rho) * popularity_score
             item_relevance_score.append(item_score)
             item_relevance_scores.append(item_relevance_score)
 
-
 item_relevance_scores.sort(reverse=True, key=lambda x: x[1])  # reverse ordering by item_relevance_score
 if len(item_relevance_scores) < M:
-    # TODO take the M - n_chosen most popular items that have not been rated by the reference user
-    print("Hey, looks like there are not enough items to suggest :( ")
+    n_items = M - len(item_relevance_scores)
+    items_to_be_picked = []
+    recommended_items = []
+    relevant_items = []
+    for ele in item_relevance_scores:
+        relevant_items.append(ele[0])
+    count = 0
+    # we assume that never happens that the user has already interacted with all the existing items in the database
+    for ind in full_popularity_model.index:
+        if ind not in relevant_items and ind not in uid_items:
+            items_to_be_picked.append(ind)
+            count += 1
+            if count == n_items:
+                break
+    for i in items_to_be_picked:
+        recommended_item = [i, full_popularity_model.iloc[i]['popularity_score']]
+        recommended_items.append(recommended_item)
+    print("\nHere there are the suggested items for user n° {}:\n".format(u_id))
+    for item in item_relevance_scores:
+        print("Item n° {}   --->   Score: {}".format(item[0], item[1]))
+    for item in recommended_items:
+        print("Item n° {}   --->   Score: {} (chosen from popularity model)".format(item[0], item[1]))
 else:
     item_relevance_scores = item_relevance_scores[0:M]
     print("\nHere there are the suggested items for user n° {}:\n".format(u_id))
