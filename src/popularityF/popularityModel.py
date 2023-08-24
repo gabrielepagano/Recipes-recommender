@@ -26,13 +26,34 @@ class PopularityModel:
 
         return self.MODEL_NAME
 
-    #TODO: implement an overloading method in case we need a popularity model without necessarily considering a specific user
-    def recommend_items(self, user_id, topn=10, verbose=False):
+    def get_popularity(self, verbose=False):
+        """
+            Args:
+                verbose: defaults to False
+            Returns:
+                popularity_df: the popularity dataframe currently loaded in the model
+        """
+
+        popularity_df = self.popularity_df.sort_values('popularity_score', ascending=False)
+
+        if verbose:
+            if self.recipes_df is None:
+                raise Exception('"recipes_df" is required in verbose mode')
+
+            popularity_df = popularity_df.merge(self.recipes_df, how='left',
+                                                left_on=popularity_df.index,
+                                                right_on='i')[
+                ['popularity_score', 'i', 'name', 'tags', 'contributor_id', 'minutes', 'n_steps', 'n_ingredients']]
+
+        return popularity_df
+
+    def recommend_items(self, user_id, topn=10, exclusions=None, verbose=False):
         """
             Args:
                 user_id: the id of the user that the model is recommending recipes to
                 topn: defaults to 10. Defines amount of recipes to be recommended. If '-1' it returns the full
-                      popularity model
+                      popularity model (filtered with user_id in consideration)
+                exclusions: A list of items to exclude from the recommendation, Optional
                 verbose: defaults to False
             Returns:
                 recommendations_df: the topn recommended recipes
@@ -40,13 +61,16 @@ class PopularityModel:
 
         # Recommend the more popular recipes that the user hasn't seen yet.
         recipes_to_ignore = utils.get_interacted(user_id=user_id, interactions_df=self.interactions_test_df)
+        if exclusions is not None:
+            recipes_to_ignore.extend(exclusions)
+
         if topn != -1:
             recommendations_df = self.popularity_df[~self.popularity_df.index.isin(recipes_to_ignore)] \
                 .sort_values('popularity_score', ascending=False) \
                 .head(topn)
-        # consider to add the recipes to ignore instead of doing the check in the UserCollaborative filtering file
         else:
-            recommendations_df = self.popularity_df.sort_values('popularity_score', ascending=False)
+            recommendations_df = self.popularity_df[~self.popularity_df.index.isin(recipes_to_ignore)] \
+                .sort_values('popularity_score', ascending=False)
 
         if verbose:
             if self.recipes_df is None:
