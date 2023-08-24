@@ -26,13 +26,14 @@ def get_popularity(verbose=False):
     return popularity_model.get_popularity()
 
 
-def recommend_items(user_id, topn, prnt=False, verbose=False):
+def recommend_items(user_id, topn, exclusions=None, prnt=False, verbose=False):
     """
     Utilises the Popularity Model to recommend a set of items to a specified user.
 
     Args:
         user_id: the id of the user in question
         topn: the number of most popular items to be recommended to the user
+        exclusions: External list of items to ignore in the recommendation, Optional
         prnt: defaults to False
         verbose: defaults to False
     """
@@ -46,7 +47,7 @@ def recommend_items(user_id, topn, prnt=False, verbose=False):
 
     popularity_model = PopularityModel(interactions_df, popularity_scores_df, recipes_df)
 
-    recommended_items_df = popularity_model.recommend_items(user_id, topn, verbose)
+    recommended_items_df = popularity_model.recommend_items(user_id, topn, exclusions, verbose)
 
     if prnt:
         print("\nHere we have the", topn, "recipes that we recommend to the user_id:", user_id, "\n")
