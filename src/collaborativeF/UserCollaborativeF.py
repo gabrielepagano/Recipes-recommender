@@ -88,7 +88,7 @@ relevance_scores.sort(reverse=True, key=lambda x: x[1])  # reverse ordering by r
 # that hasn't been implemented yet)
 P = 5  # (!!!)
 M = 10  # (!!!)
-full_popularity_model = popularityF.recommend_items(u_id, -1)
+full_popularity_model = popularityF.get_popularity()
 relevant_users_ids = []
 total_items = []  # all the items ids of the relevant users
 total_ratings = []  # the corresponding ratings
