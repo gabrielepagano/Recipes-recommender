@@ -39,35 +39,42 @@ from src.collaborativeF.ItemCollaborativeModel import ItemCollaborativeModel
 here = os.path.dirname(os.path.abspath(__file__))
 
 
-def recommend_items(user_id, topn=10, prnt=False, verbose=False):
-    """
-        Utilises the ItemCollaborative Model to recommend a set of items to a specified user.
+class ItemCollaborativeHelper:
 
-        Args:
-            user_id: the id of the user in question
-            topn: the number of most relevant items to be recommended to the user
-            prnt: defaults to False
-            verbose: defaults to False
-    """
+    def __init__(self):
+        """
+        Helper class for Item Collaborative Model.
+        """
 
-    # loading the users dataframe
-    users_df = pd.read_csv(os.path.join(here, "../../dataset/users.csv"))
-    # loading the popularity_scores dataframe
-    popularity_scores_df = pd.read_csv(os.path.join(here, "../../dataset/popularity_scores.csv"))
-    # loading the recipes dataframe
-    recipes_df = pd.read_csv(os.path.join(here, "../../dataset/recipes.csv"))
-    # loading the interactions dataframe
-    interactions_df = pd.read_csv(os.path.join(here, "../../dataset/interactions.csv"))
+        # loading the users dataframe
+        users_df = pd.read_csv(os.path.join(here, "../../dataset/users.csv"))
+        # loading the popularity_scores dataframe
+        popularity_scores_df = pd.read_csv(os.path.join(here, "../../dataset/popularity_scores.csv"))
+        # loading the recipes dataframe
+        recipes_df = pd.read_csv(os.path.join(here, "../../dataset/recipes.csv"))
+        # loading the interactions dataframe
+        interactions_df = pd.read_csv(os.path.join(here, "../../dataset/interactions.csv"))
 
-    item_collaborative_model = ItemCollaborativeModel(users_df, interactions_df,
-                                                      popularity_scores_df, recipes_df, 0.5)  # ignoring 50% items
+        self.item_collaborative_model = ItemCollaborativeModel(users_df, interactions_df, popularity_scores_df,
+                                                               recipes_df, 0.5)  # ignoring 50% items
 
-    recommended_items_df = item_collaborative_model.recommend_items(user_id, topn, verbose)
+    def recommend_items(self, user_id, topn=10, prnt=False, verbose=False):
+        """
+            Utilises the ItemCollaborative Model to recommend a set of items to a specified user.
 
-    if prnt:
-        print("\nHere we have the", topn, "recipes that we recommend to the user_id:", user_id, "\n")
-        print(recommended_items_df)
-        print("\nDescription of recommended_items_df: \n")
-        print(recommended_items_df.describe())
+            Args:
+                user_id: the id of the user in question
+                topn: the number of most relevant items to be recommended to the user
+                prnt: defaults to False
+                verbose: defaults to False
+        """
 
-    return recommended_items_df
+        recommended_items_df = self.item_collaborative_model.recommend_items(user_id, topn, verbose)
+
+        if prnt:
+            print("\nHere we have the", topn, "recipes that we recommend to the user_id:", user_id, "\n")
+            print(recommended_items_df)
+            print("\nDescription of recommended_items_df: \n")
+            print(recommended_items_df.describe())
+
+        return recommended_items_df

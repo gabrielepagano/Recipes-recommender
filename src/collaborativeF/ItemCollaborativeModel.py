@@ -113,6 +113,8 @@ class ItemCollaborativeModel:
         popularity_df = popularityF.get_popularity()
         popularity_scores = popularity_df['popularity_score'].to_numpy()
 
+        popularity_helper = popularityF.PopularityHelper()
+
         # Excluding items the User has already interacted with
         recipes_to_ignore = utils.get_interacted(user_id=user_id, interactions_df=self.interactions_test_df)
 
@@ -179,7 +181,7 @@ class ItemCollaborativeModel:
         # Supplement recommendations from the popularity model if needed
         if len(recommended_indices) < topn:
             # Supplementing from the popularity model does not ignore the skipped items**
-            items = popularityF.recommend_items(user_id, topn - len(recommended_indices), recommended_indices)
+            items = popularity_helper.recommend_items(user_id, topn - len(recommended_indices), recommended_indices)
 
             recommended_indices.extend(items.index.to_list())  # recommend some items from popularity model
             recommended_distances.extend(items['popularity_score'].to_list())
