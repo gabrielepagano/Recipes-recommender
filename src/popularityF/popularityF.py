@@ -25,10 +25,14 @@ def get_popularity():
 
 class PopularityHelper:
 
-    def __init__(self):
+    def __init__(self, topn=10):
         """
         Helper class for Popularity Model.
+        Args:
+            topn: the number of most popular items to be recommended to the user
         """
+
+        self.topn = topn
 
         # loading the popularity_scores dataframe
         popularity_scores_df = pd.read_csv(os.path.join(here, "../../dataset/popularity_scores.csv"))
@@ -39,22 +43,21 @@ class PopularityHelper:
 
         self.popularity_model = PopularityModel(interactions_df, popularity_scores_df, recipes_df)
 
-    def recommend_items(self, user_id, topn=10, exclusions=None, prnt=False, verbose=False):
+    def recommend_items(self, user_id, exclusions=None, prnt=False, verbose=False):
         """
         Utilises the Popularity Model to recommend a set of items to a specified user.
 
         Args:
             user_id: the id of the user in question
             exclusions: External list of items to ignore in the recommendation, Optional
-            topn: the number of most popular items to be recommended to the user
             prnt: defaults to False
             verbose: defaults to False
         """
 
-        recommended_items_df = self.popularity_model.recommend_items(user_id, topn, exclusions, verbose)
+        recommended_items_df = self.popularity_model.recommend_items(user_id, self.topn, exclusions, verbose)
 
         if prnt:
-            print("\nHere we have the", topn, "recipes that we recommend to the user_id:", user_id, "\n")
+            print("\nHere we have the", self.topn, "recipes that we recommend to the user_id:", user_id, "\n")
             print(recommended_items_df)
             print("\nDescription of recommended_items_df: \n")
             print(recommended_items_df.describe())
