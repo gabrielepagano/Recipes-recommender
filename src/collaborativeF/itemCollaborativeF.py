@@ -39,7 +39,7 @@ from src.collaborativeF.ItemCollaborativeModel import ItemCollaborativeModel
 here = os.path.dirname(os.path.abspath(__file__))
 
 
-def recommend_items(user_id, topn, prnt, verbose):
+def recommend_items(user_id, topn=10, prnt=False, verbose=False):
     """
         Utilises the ItemCollaborative Model to recommend a set of items to a specified user.
 

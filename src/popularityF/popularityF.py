@@ -26,7 +26,7 @@ def get_popularity(verbose=False):
     return popularity_model.get_popularity()
 
 
-def recommend_items(user_id, topn, exclusions=None, prnt=False, verbose=False):
+def recommend_items(user_id, topn=10, exclusions=None, prnt=False, verbose=False):
     """
     Utilises the Popularity Model to recommend a set of items to a specified user.
 
