@@ -164,9 +164,10 @@ class ItemCollaborativeModel:
             distances = distances[1:]
             recommended_distances.extend(distances)
 
-        # sorting the recommended items based on their respective distances
+        # removing duplicates and reformatting the lists
         _recommended_indices = []
         _recommended_distances = []
+
         for (i, j) in zip(recommended_indices, recommended_distances):
             if i not in _recommended_indices:
                 _recommended_indices.append(i)
@@ -192,8 +193,7 @@ class ItemCollaborativeModel:
 
         if verbose:
             recommendations_df = recommendations_df[~recommendations_df['i'].isin(recipes_to_ignore)] \
-                .sort_values('relevance_score', ascending=True) \
-                .head(topn)
+                .sort_values('relevance_score', ascending=True)
 
             if self.recipes_df is None:
                 raise Exception('"recipes_df" is required in verbose mode')
@@ -203,7 +203,7 @@ class ItemCollaborativeModel:
                                                            right_on='i')[
                                       ['relevance_score', 'i', 'name', 'tags', 'contributor_id', 'minutes', 'n_steps',
                                        'n_ingredients']]
-                                  .sort_values('relevance_score', ascending=False))
+                                  .sort_values('relevance_score', ascending=False)).head(topn)
         else:
             recommendations_df = recommendations_df[~recommendations_df['i'].isin(recipes_to_ignore)] \
                 .sort_values('relevance_score', ascending=False) \
